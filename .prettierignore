@@ -1,0 +1,9 @@
+tsconfig.json
+package.json
+.eslintrc.json
+.prettierrc.json
+.next/
+next.config.js
+postcss.config.js
+react-window.d.ts
+tailwind.config.js
