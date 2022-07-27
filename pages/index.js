@@ -1,9 +1,17 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import Link from 'next/link'
-import styles from '../styles/Home.module.css'
+import Head from 'next/head';
+const { DateTime } = require('luxon');
+import styles from '../styles/Home.module.css';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function Home() {
+  const [checkins, setCheckins] = useState([]);
+  useEffect(() => {
+    axios.get('http://localhost:3000/api/checkin').then((res) => {
+      setCheckins(res?.data?.data || []);
+    });
+    // console.log(DateTime.fromFormat('2022-07-27T02:14:58.658Z').toLocal());
+  }, []);
   return (
     <div className={styles.container}>
       <Head>
@@ -13,47 +21,23 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <p className={styles.description}>
-          Try out api routes{' '}
-          <Link href="api/hello" passHref>
-            <code className={styles.code}>api/hello</code>
-          </Link>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-        </div>
+        {checkins.map((c, idx) => {
+          return (
+            <div key={idx}>
+              <p>
+                {c.created_at} - {c.timezone}
+              </p>
+              <p>{DateTime.fromISO(c.created_at).setZone(c.timezone).toString()}</p>
+            </div>
+          );
+        })}
       </main>
 
       <footer className={styles.footer}>
-        <a
-          href="https://app.cyclic.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            Cyclic
-          </span>
+        <a href="https://app.cyclic.sh" target="_blank" rel="noopener noreferrer">
+          Powered by <span className={styles.logo}>Cyclic</span>
         </a>
       </footer>
     </div>
-  )
+  );
 }
